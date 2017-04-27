@@ -6,7 +6,7 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/21 17:44:39 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/04/26 17:31:11 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/04/27 09:11:03 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,12 @@ int 		get_next_line(const int fd, char **line)
 	while ((bytes_read = read(fd, buffer, BUFF_SIZE)) > 0)
 	{
 		spot_of_newline = find_new_line(buffer);
-		if (spot_of_newline && spot_of_newline < bytes_read)
+		*line = ft_strnew(bytes_read);
+		if (spot_of_newline && spot_of_newline < --bytes_read)
 		{
-			printf("%d", spot_of_newline);
 			tmp = ft_strsub(buffer, 0, ++spot_of_newline);
 			ft_strcat(*line, tmp);
-//			free (tmp);
-//			free (buffer);
+			free (tmp);
 			return (1);
 		}
 		else

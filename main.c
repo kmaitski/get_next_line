@@ -1,5 +1,5 @@
 /*
- * =====================================================================================
+ * ==================================================================================
  *
  *       Filename:  main.c
  *
@@ -13,7 +13,7 @@
  *         Author:  Kevin Maitski (KM), kevin.maitski@gmail.com
  *   Organization:  42
  *
- * =====================================================================================
+ * ==================================================================================
  */
 
 #include "get_next_line.h"
@@ -24,8 +24,12 @@
 int	main(void)
 {
 	const int	fd = open("textfile.txt", O_RDONLY);
-	char *line = (char *)malloc(600);
+	char *line;
 
 //	printf("%d", fd);
+	while (get_next_line(fd, &line))
+	{
+		printf("%s", line);
+	}
 	printf("%d", get_next_line(fd, &line));
 }
