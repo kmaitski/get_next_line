@@ -5,69 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/04/21 17:44:39 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/04/27 09:11:03 by kmaitski         ###   ########.fr       */
+/*   Created: 2017/04/28 10:37:16 by kmaitski          #+#    #+#             */
+/*   Updated: 2017/04/28 10:44:14 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-#include <stdio.h>
-
-/******************************************************
-**               funtion prototypes                 ***
-*******************************************************/
-int get_next_line(const int fd, char **line);
-static int find_new_line (char *str);
 
 /* 
  * ===  FUNCTION  ==============================================================
- *         Name:  find_new_line
- *  Description:  Returns the spot where a \n character was found in a string or
- *  			  a -1 if there is no \n.
+ *         Name:  read_into_buffer
+ *  Description:  Read from the file descriptor into the buffer.
  * =============================================================================
  */
-static int	find_new_line (char *str)
+void	read_into_buffer (int fd, char **line)
 {
-	int	i;
+	int	read_bytes;
 
-	i = -1;
-	while (str[++i])
-		if (str[i] == '\n')
-			return ((int)i);
-	return (-1);
-}		/* -----  end of function find_new_line  ----- */
-
+	while ((read_bytes = read(
+	return <+return_value+>;
+}		/* -----  end of function read_into_buffer  ----- */
 /* 
  * ===  FUNCTION  ==============================================================
  *         Name:  get_next_line
  *  Description:  Returns a line ending in a new line that was read from a file
- *  			  descriptor.
+ *  			  descriptor (fd)
  * =============================================================================
  */
-int 		get_next_line(const int fd, char **line)
+int		get_next_line (int fd, char **line)
 {
-	int		bytes_read;
-	char	buffer[BUFF_SIZE];
-	int		spot_of_newline;
-	char	*tmp;
-
 	if (fd < 0 || !line)
 		return (-1);
-	while ((bytes_read = read(fd, buffer, BUFF_SIZE)) > 0)
-	{
-		spot_of_newline = find_new_line(buffer);
-		*line = ft_strnew(bytes_read);
-		if (spot_of_newline && spot_of_newline < --bytes_read)
-		{
-			tmp = ft_strsub(buffer, 0, ++spot_of_newline);
-			ft_strcat(*line, tmp);
-			free (tmp);
-			return (1);
-		}
-		else
-			ft_strcat(*line, buffer);
-	}
-	if (bytes_read == -1)
-		return (-1);
+	read_into_buffer(fd, line);
 	return (0);
 }		/* -----  end of function get_next_line  ----- */
