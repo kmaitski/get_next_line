@@ -26,10 +26,8 @@ int	main(void)
 	const int	fd = open("textfile.txt", O_RDONLY);
 	char *line;
 
-//	printf("%d", fd);
 	while (get_next_line(fd, &line))
 	{
 		printf("%s", line);
 	}
-	printf("%d", get_next_line(fd, &line));
 }

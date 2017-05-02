@@ -6,7 +6,7 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/30 14:47:00 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/01 15:37:15 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/02 07:28:23 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,19 +51,22 @@ void	intialize_line (char **tmp, char **line, int fd)
 	int		len;
 
 	newline_location = find_newline(*tmp);
+	len = ft_strlen(*tmp);
 	if (newline_location > 0)
 	{
-		len = ft_strlen(*tmp);
 		*line = ft_strsub(*tmp, 0, newline_location);
-		newline_location++;
-		*tmp = ft_strsub(*tmp, newline_location, len - newline_location);
+		*tmp = ft_strchr(*tmp, '\n');
+	}
+	else if (newline_location == 0)
+	{
+		*line = NULL;
+		*tmp = ft_strsub(*tmp, 1, len - ++newline_location);
 	}
 	else
 	{
 		read_into_buffer(fd, tmp);
 		intialize_line(tmp, line, fd);
 	}
-
 }		/* -----  end of function intialize_line  ----- */
 /* 
  * ===  FUNCTION  ======================================================================
@@ -100,16 +103,19 @@ int	get_next_line (int fd, char **line)
 	static char	*tmp = NULL;
 	int	read_bytes;
 	int	newline_location;
+	int	len;
 	
+	read_bytes = 0;
 	newline_location = -1;
-	if (!tmp)
+	if (!tmp || (len = ft_strlen(tmp) == 0))
 	{
 		tmp = ft_strnew(1);
-		while ((newline_location = find_newline(tmp)) < 0)
-			read_bytes = read_into_buffer(fd, &tmp);
+		read_bytes = read_into_buffer(fd, &tmp);
 		if (!read_bytes)
 			return (0);
 	}
+	if ((len = ft_strlen(tmp)) == 1)
+		return (0);
 	intialize_line(&tmp, line, fd);
 	return (1);
 }		/* -----  end of function get_next_line  ----- */
