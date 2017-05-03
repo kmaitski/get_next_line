@@ -6,7 +6,7 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/30 14:47:00 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/02 07:28:23 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/03 15:30:27 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 **               funtion prototypes                 ***
 *******************************************************/
 int find_newline (char *str);
-void intialize_line (char **tmp, char **line, int fd);
+int intialize_line (char *tmp, char **line, int fd);
 int read_into_buffer (int fd, char **tmp);
 int get_next_line (int fd, char **line);
 
@@ -45,28 +45,26 @@ int	find_newline (char *str)
  *  Description:  Intialize the line.
  * =====================================================================================
  */
-void	intialize_line (char **tmp, char **line, int fd)
+int	intialize_line (char *tmp, char **line, int fd)
 {
 	int	newline_location;
 	int		len;
 
-	newline_location = find_newline(*tmp);
-	len = ft_strlen(*tmp);
+	newline_location = find_newline(tmp);
+	len = ft_strlen(tmp);
 	if (newline_location > 0)
-	{
-		*line = ft_strsub(*tmp, 0, newline_location);
-		*tmp = ft_strchr(*tmp, '\n');
-	}
+		*line = ft_strsub(tmp, 0, newline_location);
 	else if (newline_location == 0)
 	{
 		*line = NULL;
-		*tmp = ft_strsub(*tmp, 1, len - ++newline_location);
+		tmp = ft_strsub(tmp, 1, len - ++newline_location);
 	}
 	else
 	{
-		read_into_buffer(fd, tmp);
+		read_into_buffer(fd, &tmp);
 		intialize_line(tmp, line, fd);
 	}
+	return (newline_location);
 }		/* -----  end of function intialize_line  ----- */
 /* 
  * ===  FUNCTION  ======================================================================
@@ -85,7 +83,7 @@ int	read_into_buffer (int fd, char **tmp)
 	if (read_bytes)
 	{
 		buffer[read_bytes] = '\0';
-		if (!tmp)
+		if (ft_strlen(*tmp) == 0)
 			*tmp = ft_strdup(buffer);
 		else
 			*tmp = ft_strcat(*tmp, buffer);
@@ -101,10 +99,12 @@ int	read_into_buffer (int fd, char **tmp)
 int	get_next_line (int fd, char **line)
 {
 	static char	*tmp = NULL;
-	int	read_bytes;
-	int	newline_location;
-	int	len;
-	
+	int			read_bytes;
+	int			newline_location;
+	int			len;
+
+	if (fd < 0 || !line)
+		return (-1);
 	read_bytes = 0;
 	newline_location = -1;
 	if (!tmp || (len = ft_strlen(tmp) == 0))
@@ -115,7 +115,13 @@ int	get_next_line (int fd, char **line)
 			return (0);
 	}
 	if ((len = ft_strlen(tmp)) == 1)
+	{
+		free (tmp);
+		free (line);
 		return (0);
-	intialize_line(&tmp, line, fd);
+	}
+	intialize_line(tmp, line, fd);
+	tmp = ft_strchr(tmp, '\n');
+	tmp++;
 	return (1);
 }		/* -----  end of function get_next_line  ----- */

@@ -23,10 +23,11 @@
 
 int	main(void)
 {
-	const int	fd = open("textfile.txt", O_RDONLY);
+//	const int	fd = open("textfile.txt", O_RDWR);
 	char *line;
 
-	while (get_next_line(fd, &line))
+//	write(fd, "aaa\nbbb\nccc\nddd\n", 16);
+	while (get_next_line(0, &line))
 	{
 		printf("%s", line);
 	}
