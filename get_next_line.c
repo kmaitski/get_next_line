@@ -6,7 +6,7 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/30 14:47:00 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/03 15:30:27 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/04 08:41:17 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 **               funtion prototypes                 ***
 *******************************************************/
 int find_newline (char *str);
-int intialize_line (char *tmp, char **line, int fd);
+int intialize_line (char *tmp, char **line, int fd, int read_bytes);
 int read_into_buffer (int fd, char **tmp);
 int get_next_line (int fd, char **line);
 
@@ -45,7 +45,7 @@ int	find_newline (char *str)
  *  Description:  Intialize the line.
  * =====================================================================================
  */
-int	intialize_line (char *tmp, char **line, int fd)
+int	intialize_line (char *tmp, char **line, int fd, int read_bytes)
 {
 	int	newline_location;
 	int		len;
@@ -59,11 +59,13 @@ int	intialize_line (char *tmp, char **line, int fd)
 		*line = NULL;
 		tmp = ft_strsub(tmp, 1, len - ++newline_location);
 	}
-	else
+	else if (read_bytes)
 	{
-		read_into_buffer(fd, &tmp);
-		intialize_line(tmp, line, fd);
+		read_bytes = read_into_buffer(fd, &tmp);
+		intialize_line(tmp, line, fd, read_bytes);
 	}
+	else
+		*line = ft_strsub(tmp, 0, len);
 	return (newline_location);
 }		/* -----  end of function intialize_line  ----- */
 /* 
@@ -100,13 +102,12 @@ int	get_next_line (int fd, char **line)
 {
 	static char	*tmp = NULL;
 	int			read_bytes;
-	int			newline_location;
 	int			len;
+	int			newline_location;
 
 	if (fd < 0 || !line)
 		return (-1);
 	read_bytes = 0;
-	newline_location = -1;
 	if (!tmp || (len = ft_strlen(tmp) == 0))
 	{
 		tmp = ft_strnew(1);
@@ -116,12 +117,12 @@ int	get_next_line (int fd, char **line)
 	}
 	if ((len = ft_strlen(tmp)) == 1)
 	{
-		free (tmp);
-		free (line);
+//		free (tmp);
+//		free (line);
 		return (0);
 	}
-	intialize_line(tmp, line, fd);
-	tmp = ft_strchr(tmp, '\n');
-	tmp++;
+	newline_location = intialize_line(tmp, line, fd, read_bytes);
+	newline_location++;
+	tmp = ft_strsub(tmp, newline_location, len - newline_location);
 	return (1);
 }		/* -----  end of function get_next_line  ----- */
