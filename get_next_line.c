@@ -6,12 +6,11 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/12 14:40:25 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/14 14:58:50 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/15 16:35:32 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -21,25 +20,27 @@
  */
 static int	intialize_line(int newline_location, int length, char **store, char **line)
 {
+	char	*tmp;
+
+	tmp = *store;
+	free(*store);
 	if (newline_location > 0)
 	{
-		*line = ft_strsub(*store, 0, newline_location);
+		*line = ft_strsub(tmp, 0, newline_location);
 		newline_location++;
-		*store = ft_strsub(*store, newline_location, length - newline_location);
-		return (1);
+		*store = ft_strsub(tmp, newline_location, length - newline_location);
 	}
 	else if (newline_location == 0)
 	{
-		*store = ft_strsub(*store, 1, length - 1);
+		*store = ft_strsub(tmp, 1, length - 1);
 		*line = ft_strnew(1);
-		return (1);
 	}
 	else
 	{
-		*line = ft_strsub(*store, 0, length);
+		*line = ft_strsub(tmp, 0, length);
 		*store = NULL;
-		return (1);
 	}
+	return (1);
 }		/* -----  end of function intialize_line  ----- */
 
 /* 
@@ -67,23 +68,31 @@ static int	find_newline (char *store)
  *  Description:  Reads from the file to the pointer store.
  * =====================================================================================
  */
-static void	read_into_store (int fd, char **store)
+static char	*read_into_store (int fd)
 {
 	int	read_bytes;
 	char	buffer[BUFF_SIZE];
-	int	store_bytes;
+	char	*store;
+	char	*tmp;
 
-	store_bytes = 1;
-	while (store_bytes)
+	store = NULL;
+	read_bytes = 1;
+	while (read_bytes)
 	{
 		read_bytes = read(fd, buffer, BUFF_SIZE);
-		store_bytes = read_bytes;
-		buffer[store_bytes] = '\0';
-		if (ft_strlen(*store) == 0)
-			*store = ft_strdup(buffer);
+		buffer[read_bytes] = '\0';
+		if (read_bytes < 0)
+			break ;
+		else if (!store)
+			store = ft_strdup(buffer);
 		else
-			*store = ft_strcat(*store, buffer);
+		{
+			tmp = store;
+			free(store);
+			store = ft_strjoin(tmp, buffer);
+		}
 	}
+	return (store);
 }		/* -----  end of function read_into_store  ----- */
 
 /* 
@@ -99,12 +108,13 @@ int	get_next_line (int fd, char **line)
 	int			newline_location;
 	int			length;
 
+	if (fd < 0 || !line)
+		return (-1);
 	if (!store)
-	{
-		store = ft_strnew(1);
-		read_into_store(fd, &store);
-	}
-	while (*store)
+		store = read_into_store(fd);
+	if (!store)
+		return (-1);
+	if (*store)
 	{
 		newline_location = find_newline(store);
 		length = ft_strlen(store);

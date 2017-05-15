@@ -34,8 +34,10 @@ int main(void)
 	write(fd, "aaa", 3);
 	close(p[1]);
 	dup2(out, fd);
-	gnl_ret = get_next_line(p[0], &line);
-	printf("%s", line);
-	printf("%d", ft_strcmp(line, "aaa"));
-	printf("%d", gnl_ret);
+	while ((gnl_ret = get_next_line(p[0], &line)))
+	{
+		printf("%s", line);
+		printf("%d", ft_strcmp(line, "aaa"));
+		printf("%d", gnl_ret);
+	}
 }

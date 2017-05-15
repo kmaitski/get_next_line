@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  03_moulitest.c
+ *       Filename:  main1.c
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  05/11/2017 14:39:29
+ *        Created:  05/14/2017 15:04:02
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -19,13 +19,13 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-int	main(void)
+int main(void)
 {
-char 	*line;
-int		out;
-int		p[2];
-char 	*str;
-int		gnl_ret;
+	char 	*line;
+	int		out;
+	int		p[2];
+	char 	*str;
+	int		gnl_ret;
 
 	str = (char *)malloc(1000 * 1000);
 	*str = '\0';
@@ -39,6 +39,10 @@ int		gnl_ret;
 	write(1, str, ft_strlen(str));
 	close(p[1]);
 	dup2(out, 1);
-	gnl_ret = get_next_line(p[0], &line);
-	printf("%s", str);
+	while ((gnl_ret = get_next_line(p[0], &line)))
+	{
+		printf("%s", line);
+		printf("%d", ft_strcmp(line, str));
+		printf("%d", gnl_ret);
+	}
 }
