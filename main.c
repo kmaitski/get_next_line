@@ -21,23 +21,22 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-int	main(void)
-{
+int	main(void) {
 	int	fd = open("textfile.txt", O_WRONLY);
 	char *line;
 //	int	error_return;
-//	char	*str;
-//	int	len = 50;
+	char	*str;
+	int	len = 50;
 
-//	str = (char *)malloc(1000 * 1000);
-//	*str = '\0';
-//	while (len--)
-//		ft_strcat(str, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur in leo dignissim, gravida leo id, imperdiet urna. Aliquam magna nunc, maximus quis eleifend et, scelerisque non dolor. Suspendisse augue augue, tempus");
+	str = (char *)malloc(1000 * 1000);
+	*str = '\0';
+	while (len--)
+		ft_strcat(str, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur in leo dignissim, gravida leo id, imperdiet urna. Aliquam magna nunc, maximus quis eleifend et, scelerisque non dolor. Suspendisse augue augue, tempus");
 //	printf("%d", (int)ft_strlen(str));
 //	write(fd, str, ft_strlen(str));
 
 
-	write(fd, "mnopqrstuvwxyzab", 16);
+//	write(fd, "mnopqrstuvwxyzab", 16);
 //	write(fd, "efgh\n", 5);
 //	write(fd, "ijkl\n", 5);
 //	write(fd, "mnop\n", 5);
@@ -49,10 +48,9 @@ int	main(void)
 /*  			error tests 				*/
 //	error_return = get_next_line(42, &line);
 //	printf("%d", error_return);
-	while (get_next_line(fd, &line) > 0)
-	{
+	while (get_next_line(fd, &line) > 0) {
 		printf("%s", line);
-		printf("%d", (int)ft_strlen(line));
-//		printf("%d", ft_strcmp(str, line));
+//		printf("%d", (int)ft_strlen(line));
+		printf("%d", ft_strcmp(str, line));
 	}
 }
