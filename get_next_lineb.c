@@ -1,17 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_linea.c                                   :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/12 14:40:25 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/20 16:36:02 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/20 16:05:36 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -23,19 +22,16 @@ static void	intializeLine(int newlineLocation, int length, char **store, char **
 	char	*tmp;
 
 	tmp = *store;
-	if (newlineLocation > 0)
-	{
+	if (newlineLocation > 0) {
 		*line = ft_strsub(*store, 0, newlineLocation);
 		newlineLocation++;
 		*store = ft_strsub(*store, newlineLocation, length - newlineLocation);
 	}
-	else if (newlineLocation == 0)
-	{
+	else if (newlineLocation == 0) {
 		*store = ft_strsub(*store, 1, length - 1);
 		*line = ft_strnew(1);
 	}
-	else
-	{
+	else {
 		*line = ft_strsub(*store, 0, length);
 		*store = NULL;
 	}
@@ -48,13 +44,11 @@ static void	intializeLine(int newlineLocation, int length, char **store, char **
  *  Description:  Returns the location of the newline character and -1 if none.
  * =====================================================================================
 */ 
-static int	findNewline (char *store)
-{
+static int	findNewline (char *store) {
 	int	newlineLocation;
 
 	newlineLocation = 0;
-	while (store[newlineLocation])
-	{
+	while (store[newlineLocation]) {
 		if (store[newlineLocation] == '\n')
 			return (newlineLocation);
 		newlineLocation++;
@@ -67,27 +61,22 @@ static int	findNewline (char *store)
  *  Description:  Reads from the file to the pointer store.
  * =====================================================================================
  */
-void	readIntoStore (int fd, char **store, char *tmp) {
-	int	readBytes;
+void	readIntoStore (int fd, char **store, char *tmp, int *storeBytes) {
 	char	buffer[BUFF_SIZE];
-	int 	storeBytes;
+	int		readBytes;
 
-	storeBytes = 1;
-	while (storeBytes) {
 		readBytes = read(fd, buffer, BUFF_SIZE);
-		storeBytes = readBytes;
+		*storeBytes = readBytes;
 		buffer[readBytes] = '\0';
-		if (readBytes < 0)
-			break ;
-		else if (!*store) {
+		if (!*store) {
 			*store = ft_strdup(buffer);
+			tmp = *store;
 		}
 		else if (storeBytes) {
-			tmp = *store;
 			*store = ft_strjoin(*store, buffer);
 			free (tmp);
+			tmp = *store;
 		}
-	}
 }		/* -----  end of function read_into_store  ----- */
 
 /* 
@@ -99,19 +88,24 @@ void	readIntoStore (int fd, char **store, char *tmp) {
  */
 int	get_next_line (int fd, char **line) {
 	static char	*store = NULL;
-	int			newlineLocation;
+	int			newlineLocation = -1;
 	int			length;
 	char		*tmp = NULL;
+	int			storeBytes;
 
+	storeBytes = 0;
 	if (fd < 0 || !line)
 		return (-1);
-	if (!store)
-		readIntoStore(fd, &store, tmp);
+	while (newlineLocation < 0) {
+		readIntoStore(fd, &store, tmp, &storeBytes);
+		if (!storeBytes)
+			break ;
+		newlineLocation = findNewline(store);
+	}
 	if (!store)
 		return (-1);
 	if (*store)
 	{
-		newlineLocation = findNewline(store);
 		length = ft_strlen(store);
 		intializeLine(newlineLocation, length, &store, line);
 		return (1);
