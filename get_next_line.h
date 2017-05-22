@@ -6,10 +6,9 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/21 17:35:42 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/20 15:49:46 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/21 21:04:54 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
@@ -20,4 +19,4 @@
 
 int	get_next_line(const int fd, char **line);
 
-#endif   /* ----- #ifndef get_next_line_INC  ----- */
+#endif
