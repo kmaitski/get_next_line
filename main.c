@@ -36,7 +36,7 @@ int	main(void) {
 	write(fd, str, ft_strlen(str));
 
 
-//	write(fd, "mnopqrstuvwxyzab", 16);
+//	write(fd, "aaa", 3);
 //	write(fd, "efgh\n", 5);
 //	write(fd, "ijkl\n", 5);
 //	write(fd, "mnop\n", 5);

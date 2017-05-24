@@ -6,7 +6,7 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/12 14:40:25 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/20 16:05:36 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/23 21:46:56 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,21 +61,20 @@ static int	findNewline (char *store) {
  *  Description:  Reads from the file to the pointer store.
  * =====================================================================================
  */
-void	readIntoStore (int fd, char **store, char *tmp, int *storeBytes) {
+void	readIntoStore (int fd, char **store, int *readBytes) {
 	char	buffer[BUFF_SIZE];
-	int		readBytes;
+	char	*tmp;
 
-		readBytes = read(fd, buffer, BUFF_SIZE);
-		*storeBytes = readBytes;
-		buffer[readBytes] = '\0';
+		*readBytes = read(fd, buffer, BUFF_SIZE);
+		buffer[*readBytes] = '\0';
 		if (!*store) {
 			*store = ft_strdup(buffer);
 			tmp = *store;
 		}
-		else if (storeBytes) {
-			*store = ft_strjoin(*store, buffer);
-			free (tmp);
+		else if (*readBytes) {
 			tmp = *store;
+			*store = ft_strjoin(*store, buffer);
+			free(tmp);
 		}
 }		/* -----  end of function read_into_store  ----- */
 
@@ -88,21 +87,19 @@ void	readIntoStore (int fd, char **store, char *tmp, int *storeBytes) {
  */
 int	get_next_line (int fd, char **line) {
 	static char	*store = NULL;
-	int			newlineLocation = -1;
+	int			newlineLocation;
 	int			length;
-	char		*tmp = NULL;
-	int			storeBytes;
+	int			readBytes;
 
-	storeBytes = 0;
+	readBytes = 1;
+	newlineLocation = -1;
 	if (fd < 0 || !line)
 		return (-1);
-	while (newlineLocation < 0) {
-		readIntoStore(fd, &store, tmp, &storeBytes);
-		if (!storeBytes)
-			break ;
+	while (readBytes > 0) {
+		readIntoStore(fd, &store, &readBytes);
 		newlineLocation = findNewline(store);
 	}
-	if (!store)
+	if (readBytes == -1)
 		return (-1);
 	if (*store)
 	{
