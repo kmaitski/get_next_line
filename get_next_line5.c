@@ -6,7 +6,7 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/12 14:40:25 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/23 21:46:56 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/23 21:26:02 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,17 +61,19 @@ static int	findNewline (char *store) {
  *  Description:  Reads from the file to the pointer store.
  * =====================================================================================
  */
-void	readIntoStore (int fd, char **store, int *readBytes) {
+void	readIntoStore (int fd, char **store, int *storeBytes) {
 	char	buffer[BUFF_SIZE];
+	int		readBytes;
 	char	*tmp;
 
-		*readBytes = read(fd, buffer, BUFF_SIZE);
-		buffer[*readBytes] = '\0';
+		readBytes = read(fd, buffer, BUFF_SIZE);
+		*storeBytes = readBytes;
+		buffer[readBytes] = '\0';
 		if (!*store) {
 			*store = ft_strdup(buffer);
 			tmp = *store;
 		}
-		else if (*readBytes) {
+		else if (storeBytes) {
 			tmp = *store;
 			*store = ft_strjoin(*store, buffer);
 			free(tmp);
@@ -89,17 +91,17 @@ int	get_next_line (int fd, char **line) {
 	static char	*store = NULL;
 	int			newlineLocation;
 	int			length;
-	int			readBytes;
+	int			storeBytes;
 
-	readBytes = 1;
+	storeBytes = 1;
 	newlineLocation = -1;
 	if (fd < 0 || !line)
 		return (-1);
-	while (readBytes > 0) {
-		readIntoStore(fd, &store, &readBytes);
+	while (storeBytes > 0) {
+		readIntoStore(fd, &store, &storeBytes);
 		newlineLocation = findNewline(store);
 	}
-	if (readBytes == -1)
+	if (storeBytes == -1)
 		return (-1);
 	if (*store)
 	{
