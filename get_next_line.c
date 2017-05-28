@@ -6,7 +6,7 @@
 /*   By: kmaitski <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/12 14:40:25 by kmaitski          #+#    #+#             */
-/*   Updated: 2017/05/24 22:34:18 by kmaitski         ###   ########.fr       */
+/*   Updated: 2017/05/28 14:05:39 by kmaitski         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,9 @@ static int	find_newline(char *store)
 	while (store[newline_location])
 	{
 		if (store[newline_location] == '\n')
+		{
 			return (newline_location);
+		}
 		newline_location++;
 	}		
 	return (-1);
@@ -52,10 +54,11 @@ static int	find_newline(char *store)
 
 void		read_into_store(int fd, char **store, int *store_bytes)
 {
-	char	buffer[BUFF_SIZE];
+	char	*buffer;
 	int		read_bytes;
 	char	*tmp;
 
+	buffer = (char *)malloc(sizeof(char) * (BUFF_SIZE + 1));
 	read_bytes = read(fd, buffer, BUFF_SIZE);
 	*store_bytes = read_bytes;
 	buffer[read_bytes] = '\0';
@@ -70,6 +73,7 @@ void		read_into_store(int fd, char **store, int *store_bytes)
 		*store = ft_strjoin(*store, buffer);
 		free(tmp);
 	}
+	free(buffer);
 }
 
 int			get_next_line(int fd, char **line)
